@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/pale</item>
     </style>
 
+    <style name="AppTheme_Dialog" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/pale</item>
+        <item name="colorPrimaryDark">@color/status_bar</item>
+        <item name="colorAccent">@color/pale</item>
+    </style>
+
 </resources>

@@ -10,6 +10,7 @@
   <color name="french_beige">#ab9352</color>
   <color name="coffee">#ab6a542f</color>
   <color name="bone">#87e2ded1</color>
+  <color name="bone2">#e2ded1</color>
   <color name="floral_white">#fdf9ee</color>
   <color name="dark_tan">#947e58</color>
   <color name="snow">#fafaf8</color>
@@ -18,5 +19,11 @@
   <color name="french_beige1">#a88948</color>
   <color name="timberwolf">#d8d8d8</color>
   <color name="eggshell">#efead9</color>
+  <color name="manatee_1">#969696</color>
+  <color name="manatee1">#979797</color>
+  <color name="pale_silver">#c2b9af</color>
+  <color name="eggshell1">#eae8d9</color>
+  <color name="platinum">#eeece2</color>
+  <color name="dark_gray">#b4ab9e</color>
 </resources>
 
