@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Vlooog.iml" filepath="$PROJECT_DIR$/Vlooog.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/softwarestudio_vlooog.iml" filepath="$PROJECT_DIR$/softwarestudio_vlooog.iml" />
     </modules>
   </component>
 </project>
