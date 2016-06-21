@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.nthu.softwarestudio.app.vlooog.data.AccountContract;
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
 import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
 
@@ -189,11 +190,13 @@ public class LoginFragment extends Fragment {
                 if(secure.equals(AUTHORIZED)){
                     String access_token = web_server.getString(WebServerContract.ACCESS_TOKEN);
                     int user_id = web_server.getInt(WebServerContract.USER_ID);
+                    String nickname = web_server.getString(WebServerContract.NICKNAME);
+                    String dataPath = web_server.getString(WebServerContract.USER_DATAPATH);
                     Log.v(LOG_TAG, access_token + " " + Integer.toString(user_id));
 
                     AccountHelper accountHelper = new AccountHelper(getContext());
                     accountHelper.deleteData();
-                    if(accountHelper.insertData(mUsername.getText().toString(), access_token, user_id))
+                    if(accountHelper.insertData(mUsername.getText().toString(), access_token, user_id, nickname, dataPath))
                         Log.v(LOG_TAG, "inserted to database");
                     else
                         Log.e(LOG_TAG, "failed to insert to database");

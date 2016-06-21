@@ -7,6 +7,7 @@ import android.widget.RatingBar;
  * Created by Ywuan on 21/06/2016.
  */
 public class Post {
+    private int postId;
     private Bitmap profilePicture;
     private String profileName;
     private Bitmap contentImage;
@@ -14,6 +15,64 @@ public class Post {
     private String ratingValue;
     private String content;
     private String comments;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    private String date;
+
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, String comments, int postId, String date) {
+        this.profilePicture = profilePicture;
+        this.profileName = profileName;
+        this.contentImage = contentImage;
+        this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue + " rated";
+        this.content = content;
+        this.comments = comments + " comments";
+        this.postId = postId;
+        this.date = date;
+    }
+
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, int comments, int postId, String date) {
+        this.profilePicture = profilePicture;
+        this.profileName = profileName;
+        this.contentImage = contentImage;
+        this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue + " rated";
+        this.content = content;
+        this.comments = comments + " comments";
+        this.postId = postId;
+        this.date = date;
+    }
+
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, String comments, int postId, String date) {
+        this.profilePicture = profilePicture;
+        this.profileName = profileName;
+        this.contentImage = contentImage;
+        this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue + " rated";
+        this.content = content;
+        this.comments = comments + " comments";
+        this.postId = postId;
+        this.date = date;
+    }
+
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, int comments, int postId, String date) {
+        this.profilePicture = profilePicture;
+        this.profileName = profileName;
+        this.contentImage = contentImage;
+        this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue + " rated";
+        this.content = content;
+        this.comments = comments + " comments";
+        this.postId = postId;
+        this.date = date;
+    }
 
     public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
@@ -77,5 +136,13 @@ public class Post {
 
     public String getComments() {
         return comments;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 }

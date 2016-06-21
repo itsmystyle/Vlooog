@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -55,6 +57,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,14 +78,30 @@ public class MainFragment extends Fragment {
 
     String path = null;
 
+    List<Post> Data = new ArrayList<Post>();
+
     final int CAMERA_REQUEST = 6361;
     final int PHOTO_LIB_REQUEST = 7738;
     final int PERMISSION_REQUEST = 8829;
+
+    RecyclerView recyclerView;
+    RecyclerViewPostAdapter recyclerViewPostAdapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        DownloadPost downloadPost = new DownloadPost();
+        downloadPost.execute();
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(
+                new LinearLayoutManager(getContext())
+        );
+        recyclerViewPostAdapter = new RecyclerViewPostAdapter(Data);
+        recyclerView.setAdapter(recyclerViewPostAdapter);
 
         profile_button = (ImageButton) rootView.findViewById(R.id.main_profile_button);
         camera_button = (ImageButton) rootView.findViewById(R.id.main_camera_button);
@@ -435,8 +455,140 @@ public class MainFragment extends Fragment {
         }
     }
 
+    class DownloadPost extends AsyncTask<Void, Void, Void>{
+        final String LOG_TAG = this.getClass().getSimpleName();
+
+        final String SUCCESS = "success";
+
+        HttpURLConnection httpURLConnection = null;
+        URLConnection urlConnection_profilePicture = null;
+        URLConnection urlConnection_postPicture = null;
+        BufferedReader bufferedReader = null;
+        Bitmap ProfilePicture = null;
+        Bitmap PostImage = null;
+
+        String userfolder = null;
+
+        Boolean networkService = true;
+        Boolean updated = false;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            final String POST_URL = WebServerContract.BASE_URL + "/userdata.php";
+
+            try {
+                URL url = new URL(POST_URL);
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                if(networkInfo == null || !networkInfo.isConnected()){
+                    networkService = false;
+                    return null;
+                }
+
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+
+                DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+                dataOutputStream.writeBytes("");
+                dataOutputStream.flush();
+                dataOutputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                StringBuffer stringBuffer = new StringBuffer();
+
+                if(inputStream == null){
+                    Log.e(LOG_TAG, "inputStream null");
+                    return null;
+                }
+
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while((line = bufferedReader.readLine()) != null){
+                    stringBuffer.append(line + "\n");
+                }
+                inputStream.close();
+
+                Log.v(LOG_TAG, stringBuffer.toString());
+
+                String jsonString = stringBuffer.toString();
+                Data = new ArrayList<Post>();
+
+                if(jsonString.length() == 0){
+                    Log.e(LOG_TAG, "json failed!");
+                    return null;
+                }
+
+                JSONObject vloooog_server = new JSONObject(jsonString);
+                String result = vloooog_server.getString(WebServerContract.SERVER);
+                if(result.equals(SUCCESS)) {
+                    JSONArray data = vloooog_server.getJSONArray("data");
+
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject jObject = data.getJSONObject(i);
+
+                        int postId = jObject.getInt(WebServerContract.POST_ID);
+                        String postContent = jObject.getString(WebServerContract.POST_CONTENT);
+                        String postImageName = jObject.getString(WebServerContract.POST_IMAGENAME);
+                        int postRate = jObject.getInt(WebServerContract.POST_RATE);
+                        int postRateValue = jObject.getInt(WebServerContract.POST_RATE_VALUE);
+                        int postComments = jObject.getInt(WebServerContract.POST_COMMENTS);
+                        String postDate = jObject.getString(WebServerContract.POST_DATE);
+                        String userDataPath = jObject.getString(WebServerContract.USER_DATAPATH);
+                        String userNickName = jObject.getString(WebServerContract.NICKNAME);
+                        Bitmap profileBitmap;
+                        Bitmap imageContentBitmap;
+
+                        final String profileImageBitmapUrl = WebServerContract.BASE_URL + "/" + userDataPath + "/profilephoto/eimage.jpg";
+                        final String postContentImageBitmapUrl = WebServerContract.BASE_URL + "/" + userDataPath + "/" + postImageName + ".jpeg";
+
+                        URL profilePhotoUrl = new URL(profileImageBitmapUrl);
+                        URL postContentPhotoUrl = new URL(postContentImageBitmapUrl);
+
+                        profileBitmap = BitmapFactory.decodeStream((InputStream) profilePhotoUrl.openConnection().getContent(), null, null);
+                        imageContentBitmap = BitmapFactory.decodeStream((InputStream) postContentPhotoUrl.openConnection().getContent(), null, null);
+
+                        Post tmppost = new Post(profileBitmap, userNickName, imageContentBitmap, postRate, postRateValue, postContent, postComments, postId, postDate);
+
+                        Data.add(tmppost);
+                    }
+                    updated = true;
+                }
+
+            } catch (MalformedURLException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if(updated){
+                recyclerViewPostAdapter.updateData(Data);
+            }
+            super.onPostExecute(aVoid);
+        }
+    }
+
     class RecyclerViewPostAdapter extends RecyclerView.Adapter<RecyclerViewPostAdapter.ViewHolder>{
+        private final String LOG_TAG = this.getClass().getSimpleName();
+
         List<Post> Data;
+
+        public RecyclerViewPostAdapter(List<Post> data) {
+            Data = data;
+        }
 
         public class ViewHolder extends RecyclerView.ViewHolder{
             ImageButton imageButtonProfilePicture;
@@ -446,6 +598,7 @@ public class MainFragment extends Fragment {
             TextView textViewRateValue;
             TextView textViewPostContent;
             FrameLayout frameLayoutCommentButton;
+            TextView commentValue;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -456,6 +609,7 @@ public class MainFragment extends Fragment {
                 textViewRateValue = (TextView) itemView.findViewById(R.id.recyclerview_post_item_rateValue);
                 textViewPostContent = (TextView) itemView.findViewById(R.id.recyclerview_post_content);
                 frameLayoutCommentButton = (FrameLayout) itemView.findViewById(R.id.recyclerview_comment_framelayout);
+                commentValue = (TextView) itemView.findViewById(R.id.recyclverview_post_item_comments);
             }
         }
 
@@ -468,12 +622,23 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-
+            holder.imageButtonProfilePicture.setImageBitmap(Data.get(position).getProfilePicture());
+            holder.textViewProfileName.setText(Data.get(position).getProfileName());
+            holder.imageViewPostImage.setImageBitmap(Data.get(position).getContentImage());
+            holder.ratingBar.setRating(Data.get(position).getRatingBar());
+            holder.textViewRateValue.setText(Data.get(position).getRatingValue());
+            holder.textViewPostContent.setText(Data.get(position).getContent());
+            holder.commentValue.setText(Data.get(position).getComments());
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return Data.size();
+        }
+
+        public void updateData(List<Post> DataSet){
+            this.Data = DataSet;
+            notifyDataSetChanged();
         }
 
     }

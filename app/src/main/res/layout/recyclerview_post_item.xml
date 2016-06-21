@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:backgroundTint="@color/abc_search_url_text_pressed">
+    android:layout_height="wrap_content"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="20dp"
-        android:background="@drawable/rounded_recyclerview_post_item">
+        android:background="@drawable/rounded_recyclerview_post_item"
+        android:elevation="10dp"
+        android:layout_marginBottom="12dp">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -23,7 +25,7 @@
                 android:layout_height="60dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginBottom="15dp">
 
                 <ImageButton
@@ -100,7 +102,7 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="rated"
                         android:id="@+id/recyclerview_post_item_rateValue"
-                        android:textSize="8sp"
+                        android:textSize="12sp"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/dark_tan" />
                 </FrameLayout>
@@ -119,7 +121,8 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="5dp"
-                android:textColor="@color/dark_tan" />
+                android:textColor="@color/dark_tan"
+                android:textSize="18dp" />
         </FrameLayout>
 
         <FrameLayout
@@ -128,7 +131,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginBottom="20dp"
@@ -139,12 +142,9 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="bottom">
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="15dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -159,7 +159,7 @@
                         android:text="Comments"
                         android:id="@+id/recyclverview_post_item_comments"
                         android:layout_marginLeft="5dp"
-                        android:textSize="10sp"
+                        android:textSize="13sp"
                         android:textColor="@color/dark_tan" />
 
                 </LinearLayout>
