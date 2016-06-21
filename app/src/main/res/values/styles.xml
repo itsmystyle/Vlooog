@@ -15,4 +15,11 @@
         <item name="colorAccent">@color/pale</item>
     </style>
 
+    <style name="AppTheme_RatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/french_beige1</item>
+        <item name="colorPrimaryDark">@color/manatee</item>
+        <item name="colorAccent">@color/pale</item>
+    </style>
+
 </resources>

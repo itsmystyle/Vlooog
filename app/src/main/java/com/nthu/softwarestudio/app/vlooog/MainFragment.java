@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +27,11 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kosalgeek.android.photoutil.CameraPhoto;
@@ -51,6 +55,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by Ywuan on 19/06/2016.
@@ -428,5 +433,48 @@ public class MainFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    class RecyclerViewPostAdapter extends RecyclerView.Adapter<RecyclerViewPostAdapter.ViewHolder>{
+        List<Post> Data;
+
+        public class ViewHolder extends RecyclerView.ViewHolder{
+            ImageButton imageButtonProfilePicture;
+            TextView textViewProfileName;
+            ImageView imageViewPostImage;
+            RatingBar ratingBar;
+            TextView textViewRateValue;
+            TextView textViewPostContent;
+            FrameLayout frameLayoutCommentButton;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                imageButtonProfilePicture = (ImageButton) itemView.findViewById(R.id.recyclerview_post_item_profile_picture);
+                textViewProfileName = (TextView) itemView.findViewById(R.id.recyclerview_post_item_profile_name);
+                imageViewPostImage = (ImageView) itemView.findViewById(R.id.recyclerview_post_item_imageview);
+                ratingBar = (RatingBar) itemView.findViewById(R.id.recyclerview_post_item_ratingBar);
+                textViewRateValue = (TextView) itemView.findViewById(R.id.recyclerview_post_item_rateValue);
+                textViewPostContent = (TextView) itemView.findViewById(R.id.recyclerview_post_content);
+                frameLayoutCommentButton = (FrameLayout) itemView.findViewById(R.id.recyclerview_comment_framelayout);
+            }
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recyclerview_post_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
     }
 }
