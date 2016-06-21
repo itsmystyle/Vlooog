@@ -2,18 +2,21 @@ package com.nthu.softwarestudio.app.vlooog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +32,25 @@ import android.widget.Toast;
 
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
+import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
-import com.kosalgeek.android.photoutil.PhotoLoader;
+import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
+import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.jar.Manifest;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by Ywuan on 19/06/2016.
@@ -50,6 +66,8 @@ public class MainFragment extends Fragment {
 
     private CameraPhoto cameraPhoto = null;
     private GalleryPhoto galleryPhoto = null;
+
+    String path = null;
 
     final int CAMERA_REQUEST = 6361;
     final int PHOTO_LIB_REQUEST = 7738;
@@ -134,6 +152,7 @@ public class MainFragment extends Fragment {
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == CAMERA_REQUEST){
                 String photoPath = cameraPhoto.getPhotoPath();
+                path = photoPath;
                 try {
                     final Dialog dialog = new Dialog(getContext(), R.style.AppTheme_Dialog);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -166,6 +185,8 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            UploadPost uploadPost = new UploadPost();
+                            uploadPost.execute(contentEditText.getText().toString());
                         }
                     });
 
@@ -179,6 +200,7 @@ public class MainFragment extends Fragment {
                 Uri uri = data.getData();
                 galleryPhoto.setPhotoUri(uri);
                 String photoPath = galleryPhoto.getPath();
+                path = photoPath;
                 try{
                     final Dialog dialog = new Dialog(getContext(), R.style.AppTheme_Dialog);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -211,6 +233,8 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            UploadPost uploadPost = new UploadPost();
+                            uploadPost.execute(contentEditText.getText().toString());
                         }
                     });
 
@@ -279,6 +303,130 @@ public class MainFragment extends Fragment {
         }else{
             Toast.makeText(getContext(), "Unable to permission access.", Toast.LENGTH_SHORT).show();
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    class UploadPost extends AsyncTask<String, Void, String> {
+        private final String LOG_TAG = this.getClass().getSimpleName();
+
+        HttpURLConnection urlConnection = null;
+        BufferedReader bufferedReader = null;
+
+        final String POST_URL = WebServerContract.BASE_URL + "/post.php";
+        int userid = -1;
+        String accesstoken = null;
+        Bitmap imageToUpload = null;
+        String encodedImage = null;
+
+        boolean networkService = true;
+
+        public UploadPost() {
+            AccountHelper accountHelper = new AccountHelper(getContext());
+            userid = accountHelper.getUserId();
+            accesstoken = accountHelper.getAccessToken();
+            try {
+                imageToUpload = ImageLoader.init().from(path).requestSize(512, 512).getBitmap();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                imageToUpload.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+
+            } catch (FileNotFoundException e) {
+                Log.e(TAG_LOG, "FileNotFoundException", e);
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try{
+                URL url = new URL(POST_URL);
+                String urlParameters = WebServerContract.USER_ID + "=" + userid + "&" +
+                                        WebServerContract.ACCESS_TOKEN + "=" + accesstoken + "&" +
+                                        WebServerContract.POST_CONTENT + "=" + params[0] + "&" +
+                                        WebServerContract.POST_IMAGE + "=" + encodedImage;
+
+                //Log.v(LOG_TAG, urlParameters);
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                if(networkInfo == null || !networkInfo.isConnected()){
+                    networkService = false;
+                    return null;
+                }
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+
+                DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+                dataOutputStream.writeBytes(urlParameters);
+                dataOutputStream.flush();
+                dataOutputStream.close();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer stringBuffer = new StringBuffer();
+
+                if(inputStream == null){
+                    return null;
+                }
+
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while((line = bufferedReader.readLine()) != null){
+                    stringBuffer.append(line + "\n");
+                }
+                inputStream.close();
+
+                if(stringBuffer.length() == 0) return null;
+
+                return stringBuffer.toString();
+
+            }catch (MalformedURLException e){
+                Log.e(LOG_TAG,e.getMessage(),e);
+            }catch (IOException e){
+                Log.e(LOG_TAG,e.getMessage(),e);
+            }finally{
+                if(urlConnection != null){
+                    urlConnection.disconnect();
+                }
+                if(bufferedReader != null){
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "Error closing buffer.", e);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonObject) {
+            try {
+                if(jsonObject == null || jsonObject.length() == 0){
+                    return;
+                }
+                JSONObject respone = new JSONObject(jsonObject);
+                String result = respone.getString("vloooog_server");
+
+                if(result.equals("success")){
+                    Log.v(LOG_TAG, result);
+                    Intent intent = new Intent(getContext(), MainActivity.class);
+                    getActivity().finish();
+                    getContext().startActivity(intent);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

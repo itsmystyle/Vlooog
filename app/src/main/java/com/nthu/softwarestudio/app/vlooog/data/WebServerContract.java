@@ -9,4 +9,6 @@ public class WebServerContract {
     public final static String USER_PASSWORD = "user_pass";
     public final static String ACCESS_TOKEN = "access-token";
     public final static String USER_ID = "user-id";
+    public final static String POST_IMAGE = "post_image";
+    public final static String POST_CONTENT = "post_content";
 }
