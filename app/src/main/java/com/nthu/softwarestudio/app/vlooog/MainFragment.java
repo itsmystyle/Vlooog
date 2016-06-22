@@ -215,6 +215,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.startAnimation(buttonClick);
+                Intent intent = new Intent(getContext(), FriendListActivity.class);
+                startActivity(intent);
             }
         });
 

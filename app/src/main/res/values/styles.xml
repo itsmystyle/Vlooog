@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/pale</item>
     </style>
 
+    <style name="AppTheme_Splash_Login.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme_Splash_Login.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="AppTheme_Dialog" parent="Theme.AppCompat.Light.Dialog">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/pale</item>
