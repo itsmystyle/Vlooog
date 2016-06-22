@@ -3,10 +3,12 @@ package com.nthu.softwarestudio.app.vlooog;
 import android.graphics.Bitmap;
 import android.widget.RatingBar;
 
+import java.io.Serializable;
+
 /**
  * Created by Ywuan on 21/06/2016.
  */
-public class Post {
+public class Post implements Serializable {
     private int postId;
     private Bitmap profilePicture;
     private String profileName;

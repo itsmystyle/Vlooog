@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -68,6 +69,7 @@ public class MainFragment extends Fragment {
     private final String TAG_LOG = this.getClass().getSimpleName();
 
     private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.3F);
+    private AlphaAnimation buttonClick2 = new AlphaAnimation(0.3F, 1F);
 
     private ImageButton profile_button = null;
     private ImageButton camera_button = null;
@@ -100,7 +102,7 @@ public class MainFragment extends Fragment {
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(getContext())
         );
-        recyclerViewPostAdapter = new RecyclerViewPostAdapter(Data);
+        recyclerViewPostAdapter = new RecyclerViewPostAdapter(Data, getContext());
         recyclerView.setAdapter(recyclerViewPostAdapter);
 
         profile_button = (ImageButton) rootView.findViewById(R.id.main_profile_button);
@@ -133,7 +135,7 @@ public class MainFragment extends Fragment {
                 cameraImageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        v.startAnimation(buttonClick);
+                        v.startAnimation(buttonClick2);
 
                         if(cameraPhoto != null){
                             try {
@@ -149,7 +151,7 @@ public class MainFragment extends Fragment {
                 photolibImageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        v.startAnimation(buttonClick);
+                        v.startAnimation(buttonClick2);
 
                         if(galleryPhoto != null){
                             startActivityForResult(galleryPhoto.openGalleryIntent(), PHOTO_LIB_REQUEST);
@@ -157,7 +159,11 @@ public class MainFragment extends Fragment {
                     }
                 });
 
-                if(cameraPhoto != null || galleryPhoto != null) dialog.show();
+                if(cameraPhoto != null || galleryPhoto != null) {
+                    dialog.show();
+                }else{
+                    dialog.dismiss();
+                }
             }
 
         });
@@ -202,6 +208,9 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibe.vibrate(100);
+
                             dialog.onBackPressed();
                         }
                     });
@@ -210,6 +219,9 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibe.vibrate(100);
+
                             UploadPost uploadPost = new UploadPost();
                             uploadPost.execute(contentEditText.getText().toString());
                         }
@@ -250,6 +262,9 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibe.vibrate(100);
+
                             dialog.onBackPressed();
                         }
                     });
@@ -258,6 +273,9 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             v.startAnimation(buttonClick);
+                            Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibe.vibrate(100);
+
                             UploadPost uploadPost = new UploadPost();
                             uploadPost.execute(contentEditText.getText().toString());
                         }
@@ -586,8 +604,11 @@ public class MainFragment extends Fragment {
 
         List<Post> Data;
 
-        public RecyclerViewPostAdapter(List<Post> data) {
+        Context mContext;
+
+        public RecyclerViewPostAdapter(List<Post> data, Context context) {
             Data = data;
+            mContext = context;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder{
@@ -599,9 +620,11 @@ public class MainFragment extends Fragment {
             TextView textViewPostContent;
             FrameLayout frameLayoutCommentButton;
             TextView commentValue;
+            Context context;
 
-            public ViewHolder(View itemView) {
+            public ViewHolder(View itemView, final Context context) {
                 super(itemView);
+                this.context = context;
                 imageButtonProfilePicture = (ImageButton) itemView.findViewById(R.id.recyclerview_post_item_profile_picture);
                 textViewProfileName = (TextView) itemView.findViewById(R.id.recyclerview_post_item_profile_name);
                 imageViewPostImage = (ImageView) itemView.findViewById(R.id.recyclerview_post_item_imageview);
@@ -617,11 +640,11 @@ public class MainFragment extends Fragment {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.recyclerview_post_item, parent, false);
-            return new ViewHolder(view);
+            return new ViewHolder(view, mContext);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, final int position) {
             holder.imageButtonProfilePicture.setImageBitmap(Data.get(position).getProfilePicture());
             holder.textViewProfileName.setText(Data.get(position).getProfileName());
             holder.imageViewPostImage.setImageBitmap(Data.get(position).getContentImage());
@@ -629,6 +652,24 @@ public class MainFragment extends Fragment {
             holder.textViewRateValue.setText(Data.get(position).getRatingValue());
             holder.textViewPostContent.setText(Data.get(position).getContent());
             holder.commentValue.setText(Data.get(position).getComments());
+
+            holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    Toast.makeText(getContext(), "Rating Changed!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            holder.frameLayoutCommentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.startAnimation(buttonClick);
+
+                    Intent intent = new Intent(mContext, CommentActivity.class);
+                    intent.putExtra(WebServerContract.POST_DETAIL, Data.get(position));
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

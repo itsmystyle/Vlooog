@@ -53,7 +53,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -61,7 +61,8 @@
                 android:id="@+id/recyclerview_post_item_imageview"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:maxHeight="300dp" />
         </FrameLayout>
 
         <FrameLayout
@@ -87,6 +88,7 @@
                         android:numStars="5"
                         style="@style/AppTheme_RatingBar"
                         android:stepSize="1"
+                        android:isIndicator="false"
                         android:progressTint="@color/dark_tan"
                         android:secondaryProgressTint="@color/manatee1"
                         android:progressBackgroundTint="@color/abc_primary_text_disable_only_material_light" />
