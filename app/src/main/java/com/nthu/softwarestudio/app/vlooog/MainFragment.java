@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -74,6 +75,8 @@ public class MainFragment extends Fragment {
 
     int userId;
 
+    private SwipeRefreshLayout swipeContainer;
+
     private ImageButton profile_button = null;
     private ImageButton camera_button = null;
     private ImageButton friend_button = null;
@@ -92,7 +95,16 @@ public class MainFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerViewPostAdapter recyclerViewPostAdapter;
 
+    Dialog cameraPhotoDialog;
 
+    boolean onUploadCompleted = false;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DownloadPost downloadPost = new DownloadPost();
+        downloadPost.execute();
+    }
 
     @Nullable
     @Override
@@ -100,6 +112,16 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         userId = new AccountHelper(getContext()).getUserId();
+
+        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.recyclerview_swipe);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                DownloadPost downloadPost = new DownloadPost();
+                downloadPost.execute();
+            }
+        });
 
         DownloadPost downloadPost = new DownloadPost();
         downloadPost.execute();
@@ -128,16 +150,16 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 v.startAnimation(buttonClick);
                 getAccessible();
-                final Dialog dialog = new Dialog(getContext(), R.style.AppTheme_Dialog);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.post_dialog);
+                cameraPhotoDialog = new Dialog(getContext(), R.style.AppTheme_Dialog);
+                cameraPhotoDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                cameraPhotoDialog.setContentView(R.layout.post_dialog);
 
-                Window window = dialog.getWindow();
+                Window window = cameraPhotoDialog.getWindow();
                 window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
                         WindowManager.LayoutParams.WRAP_CONTENT);
 
-                final ImageButton cameraImageButton = (ImageButton) dialog.findViewById(R.id.post_camera_button);
-                final ImageButton photolibImageButton = (ImageButton) dialog.findViewById(R.id.post_photo_lib_button);
+                final ImageButton cameraImageButton = (ImageButton) cameraPhotoDialog.findViewById(R.id.post_camera_button);
+                final ImageButton photolibImageButton = (ImageButton) cameraPhotoDialog.findViewById(R.id.post_photo_lib_button);
 
                 cameraImageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -167,9 +189,9 @@ public class MainFragment extends Fragment {
                 });
 
                 if(cameraPhoto != null || galleryPhoto != null) {
-                    dialog.show();
+                    cameraPhotoDialog.show();
                 }else{
-                    dialog.dismiss();
+                    cameraPhotoDialog.dismiss();
                 }
             }
 
@@ -229,8 +251,15 @@ public class MainFragment extends Fragment {
                             Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                             vibe.vibrate(100);
 
+                            onUploadCompleted = false;
                             UploadPost uploadPost = new UploadPost();
                             uploadPost.execute(contentEditText.getText().toString());
+
+                            DownloadPost downloadPost = new DownloadPost();
+                            downloadPost.execute();
+
+                            dialog.onBackPressed();
+                            cameraPhotoDialog.onBackPressed();
                         }
                     });
 
@@ -283,8 +312,15 @@ public class MainFragment extends Fragment {
                             Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                             vibe.vibrate(100);
 
+                            onUploadCompleted = false;
                             UploadPost uploadPost = new UploadPost();
                             uploadPost.execute(contentEditText.getText().toString());
+
+                            DownloadPost downloadPost = new DownloadPost();
+                            downloadPost.execute();
+
+                            dialog.onBackPressed();
+                            cameraPhotoDialog.onBackPressed();
                         }
                     });
 
@@ -469,10 +505,11 @@ public class MainFragment extends Fragment {
 
                 if(result.equals("success")){
                     Log.v(LOG_TAG, result);
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    getActivity().finish();
-                    getContext().startActivity(intent);
-
+                    //Intent intent = new Intent(getContext(), MainActivity.class);
+                    //getActivity().finish();
+                    //getContext().startActivity(intent);
+                    onUploadCompleted = true;
+                    return;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -598,6 +635,7 @@ public class MainFragment extends Fragment {
                 recyclerViewPostAdapter.updateData(Data);
             }
             super.onPostExecute(aVoid);
+            swipeContainer.setRefreshing(false);
         }
     }
 
@@ -686,6 +724,7 @@ public class MainFragment extends Fragment {
             holder.frameLayoutCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     v.startAnimation(buttonClick);
 
                     Intent intent = new Intent(mContext, CommentActivity.class);
@@ -711,6 +750,7 @@ public class MainFragment extends Fragment {
 
                     intent.putExtra(PostContract.POST_CONTENT_IMAGE, byteArrayContentPicture);
 
+
                     startActivity(intent);
                 }
             });
@@ -723,6 +763,16 @@ public class MainFragment extends Fragment {
 
         public void updateData(List<Post> DataSet){
             this.Data = DataSet;
+            notifyDataSetChanged();
+        }
+
+        public void clear() {
+            Data.clear();
+            notifyDataSetChanged();
+        }
+
+        public void addAll(List<Post> list) {
+            Data.addAll(list);
             notifyDataSetChanged();
         }
 

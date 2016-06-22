@@ -1,6 +1,5 @@
 package com.nthu.softwarestudio.app.vlooog;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
 import com.nthu.softwarestudio.app.vlooog.data.PostContract;
+
 
 /**
  * Created by Ywuan on 22/06/2016.
@@ -43,8 +43,6 @@ public class CommentFragment extends Fragment {
     Button commentButton;
 
     RecyclerView recyclerView;
-
-
 
     @Nullable
     @Override
@@ -119,12 +117,6 @@ public class CommentFragment extends Fragment {
 
 
         return rootView;
-    }
-
-    @Override
-    public void onStop() {
-        Toast.makeText(getContext(), "Hello" , Toast.LENGTH_SHORT).show();
-        super.onStop();
     }
 
     class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerViewCommentAdapter.ViewHolder>{

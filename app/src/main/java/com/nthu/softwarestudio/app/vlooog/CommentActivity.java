@@ -3,6 +3,7 @@ package com.nthu.softwarestudio.app.vlooog;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class CommentActivity extends AppCompatActivity {
@@ -26,8 +27,4 @@ public class CommentActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }
