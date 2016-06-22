@@ -43,6 +43,7 @@ import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
+import com.nthu.softwarestudio.app.vlooog.data.FriendListActivity;
 import com.nthu.softwarestudio.app.vlooog.data.PostContract;
 import com.nthu.softwarestudio.app.vlooog.data.PostHelper;
 import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
