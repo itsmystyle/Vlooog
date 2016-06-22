@@ -25,4 +25,9 @@ public class CommentActivity extends AppCompatActivity {
                     add(R.id.container, new CommentFragment()).commit();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:id="@+id/container"
     android:baselineAligned="false">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/scrollView"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="20dp">
 
         <LinearLayout
             android:orientation="vertical"
@@ -20,7 +20,7 @@
             android:layout_marginRight="20dp"
             android:background="@drawable/rounded_recyclerview_post_item"
             android:elevation="10dp"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -180,6 +180,7 @@
 
                         <android.support.v7.widget.RecyclerView
                             android:layout_width="match_parent"
+                            android:id="@+id/recyclerview_comment_view"
                             android:layout_height="200dp"
                             android:layout_marginLeft="15dp"
                             android:layout_marginRight="15dp"

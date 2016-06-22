@@ -42,6 +42,7 @@ import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
+import com.nthu.softwarestudio.app.vlooog.data.PostContract;
 import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
 
 import org.json.JSONArray;
@@ -71,6 +72,8 @@ public class MainFragment extends Fragment {
     private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.3F);
     private AlphaAnimation buttonClick2 = new AlphaAnimation(0.3F, 1F);
 
+    int userId;
+
     private ImageButton profile_button = null;
     private ImageButton camera_button = null;
     private ImageButton friend_button = null;
@@ -89,10 +92,14 @@ public class MainFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerViewPostAdapter recyclerViewPostAdapter;
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        userId = new AccountHelper(getContext()).getUserId();
 
         DownloadPost downloadPost = new DownloadPost();
         downloadPost.execute();
@@ -479,13 +486,7 @@ public class MainFragment extends Fragment {
         final String SUCCESS = "success";
 
         HttpURLConnection httpURLConnection = null;
-        URLConnection urlConnection_profilePicture = null;
-        URLConnection urlConnection_postPicture = null;
         BufferedReader bufferedReader = null;
-        Bitmap ProfilePicture = null;
-        Bitmap PostImage = null;
-
-        String userfolder = null;
 
         Boolean networkService = true;
         Boolean updated = false;
@@ -557,6 +558,7 @@ public class MainFragment extends Fragment {
                         String postDate = jObject.getString(WebServerContract.POST_DATE);
                         String userDataPath = jObject.getString(WebServerContract.USER_DATAPATH);
                         String userNickName = jObject.getString(WebServerContract.NICKNAME);
+                        int userId = jObject.getInt(WebServerContract.USER_ID);
                         Bitmap profileBitmap;
                         Bitmap imageContentBitmap;
 
@@ -569,7 +571,7 @@ public class MainFragment extends Fragment {
                         profileBitmap = BitmapFactory.decodeStream((InputStream) profilePhotoUrl.openConnection().getContent(), null, null);
                         imageContentBitmap = BitmapFactory.decodeStream((InputStream) postContentPhotoUrl.openConnection().getContent(), null, null);
 
-                        Post tmppost = new Post(profileBitmap, userNickName, imageContentBitmap, postRate, postRateValue, postContent, postComments, postId, postDate);
+                        Post tmppost = new Post(profileBitmap, userNickName, imageContentBitmap, postRate, postRateValue, postContent, postComments, postId, postDate, userId);
 
                         Data.add(tmppost);
                     }
@@ -644,7 +646,7 @@ public class MainFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.imageButtonProfilePicture.setImageBitmap(Data.get(position).getProfilePicture());
             holder.textViewProfileName.setText(Data.get(position).getProfileName());
             holder.imageViewPostImage.setImageBitmap(Data.get(position).getContentImage());
@@ -653,12 +655,33 @@ public class MainFragment extends Fragment {
             holder.textViewPostContent.setText(Data.get(position).getContent());
             holder.commentValue.setText(Data.get(position).getComments());
 
-            holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                @Override
-                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    Toast.makeText(getContext(), "Rating Changed!", Toast.LENGTH_SHORT).show();
+            if(Data.get(position).getPostBy() == userId){
+                holder.ratingBar.setIsIndicator(true);
+
+                if(Data.get(position).getRatingBar() != 0){
+                    holder.ratingBar.setRating(Data.get(position).getRatingBar());
                 }
-            });
+
+            }else{
+                holder.ratingBar.setIsIndicator(false);
+
+                holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if (fromUser) {
+                            Rating ratingUpload = new Rating(getContext(), Data.get(position), holder);
+                            ratingUpload.execute(Integer.toString(Data.get(position).getPostId()),
+                                                    Integer.toString(Data.get(position).getPostBy()),
+                                    Integer.toString((int)rating));
+
+
+                            notifyDataSetChanged();
+
+                            Toast.makeText(getContext(), "Rating Changed! " + rating, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
 
             holder.frameLayoutCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -666,7 +689,28 @@ public class MainFragment extends Fragment {
                     v.startAnimation(buttonClick);
 
                     Intent intent = new Intent(mContext, CommentActivity.class);
-                    intent.putExtra(WebServerContract.POST_DETAIL, Data.get(position));
+
+                    intent.putExtra(PostContract.POST_POFILE_NAME, Data.get(position).getProfileName());
+                    intent.putExtra(PostContract.POST_CONTENT, Data.get(position).getContent());
+                    intent.putExtra(PostContract.POST_RATING, Data.get(position).getRatingBar());
+                    intent.putExtra(PostContract.POST_RATING_VALUE, Data.get(position).getRatingValue_raw());
+                    intent.putExtra(PostContract.POST_COMMENT, Data.get(position).getComments_raw());
+                    intent.putExtra(PostContract.POST_DATE, Data.get(position).getDate());
+                    intent.putExtra(PostContract.POST_ID, Data.get(position).getPostId());
+                    intent.putExtra(PostContract.POST_USER_ID, Data.get(position).getPostBy());
+
+                    ByteArrayOutputStream streamProfilePicture = new ByteArrayOutputStream();
+                    Data.get(position).getProfilePicture().compress(Bitmap.CompressFormat.JPEG, 100, streamProfilePicture);
+                    byte[] byteArrayProfilePicture = streamProfilePicture.toByteArray();
+
+                    intent.putExtra(PostContract.POST_PROFILE_PICTURE, byteArrayProfilePicture);
+
+                    ByteArrayOutputStream streamContentPicture = new ByteArrayOutputStream();
+                    Data.get(position).getContentImage().compress(Bitmap.CompressFormat.JPEG, 100, streamContentPicture);
+                    byte[] byteArrayContentPicture = streamContentPicture.toByteArray();
+
+                    intent.putExtra(PostContract.POST_CONTENT_IMAGE, byteArrayContentPicture);
+
                     startActivity(intent);
                 }
             });

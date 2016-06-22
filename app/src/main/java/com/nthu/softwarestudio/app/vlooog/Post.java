@@ -1,15 +1,13 @@
 package com.nthu.softwarestudio.app.vlooog;
 
 import android.graphics.Bitmap;
-import android.widget.RatingBar;
-
-import java.io.Serializable;
 
 /**
  * Created by Ywuan on 21/06/2016.
  */
-public class Post implements Serializable {
+public class Post {
     private int postId;
+    private int postBy;
     private Bitmap profilePicture;
     private String profileName;
     private Bitmap contentImage;
@@ -17,63 +15,62 @@ public class Post implements Serializable {
     private String ratingValue;
     private String content;
     private String comments;
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     private String date;
 
-    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, String comments, int postId, String date) {
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, String comments, int postId, String date, int postBy) {
         this.profilePicture = profilePicture;
         this.profileName = profileName;
         this.contentImage = contentImage;
-        this.ratingBar = ratingBar;
-        this.ratingValue = ratingValue + " rated";
+        if(ratingBar < 0) this.ratingBar = 0;
+        else this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue;
         this.content = content;
-        this.comments = comments + " comments";
+        this.comments = comments;
         this.postId = postId;
         this.date = date;
+        this.postBy = postBy;
     }
 
-    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, int comments, int postId, String date) {
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, int comments, int postId, String date, int postBy) {
         this.profilePicture = profilePicture;
         this.profileName = profileName;
         this.contentImage = contentImage;
-        this.ratingBar = ratingBar;
-        this.ratingValue = ratingValue + " rated";
+        if(ratingBar < 0) this.ratingBar = 0;
+        else this.ratingBar = ratingBar;
+        this.ratingValue = Integer.toString(ratingValue);
         this.content = content;
-        this.comments = comments + " comments";
+        this.comments = Integer.toString(comments);
         this.postId = postId;
         this.date = date;
+        this.postBy = postBy;
     }
 
-    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, String comments, int postId, String date) {
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, int ratingValue, String content, String comments, int postId, String date, int postBy) {
         this.profilePicture = profilePicture;
         this.profileName = profileName;
         this.contentImage = contentImage;
-        this.ratingBar = ratingBar;
-        this.ratingValue = ratingValue + " rated";
+        if(ratingBar < 0) this.ratingBar = 0;
+        else this.ratingBar = ratingBar;
+        this.ratingValue = Integer.toString(ratingValue);
         this.content = content;
-        this.comments = comments + " comments";
+        this.comments = comments;
         this.postId = postId;
         this.date = date;
+        this.postBy = postBy;
     }
 
-    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, int comments, int postId, String date) {
+    public Post(Bitmap profilePicture, String profileName, Bitmap contentImage, int ratingBar, String ratingValue, String content, int comments, int postId, String date, int postBy) {
         this.profilePicture = profilePicture;
         this.profileName = profileName;
         this.contentImage = contentImage;
-        this.ratingBar = ratingBar;
-        this.ratingValue = ratingValue + " rated";
+        if(ratingBar < 0) this.ratingBar = 0;
+        else this.ratingBar = ratingBar;
+        this.ratingValue = ratingValue;
         this.content = content;
-        this.comments = comments + " comments";
+        this.comments = Integer.toString(comments);
         this.postId = postId;
         this.date = date;
+        this.postBy = postBy;
     }
 
     public void setProfilePicture(Bitmap profilePicture) {
@@ -89,15 +86,16 @@ public class Post implements Serializable {
     }
 
     public void setRatingBar(int ratingBar) {
-        this.ratingBar = ratingBar;
+        if(ratingBar < 0) this.ratingBar = 0;
+        else this.ratingBar = ratingBar;
     }
 
     public void setRatingValue(String ratingValue) {
-        this.ratingValue = ratingValue + " rated";
+        this.ratingValue = ratingValue;
     }
 
     public void setRatingValue(int ratingValue) {
-        this.ratingValue = ratingValue + " rated";
+        this.ratingValue = Integer.toString(ratingValue);
     }
 
     public void setContent(String content) {
@@ -105,12 +103,29 @@ public class Post implements Serializable {
     }
 
     public void setComments(String comments) {
-        this.comments = comments + " comments";
+        this.comments = comments;
     }
 
     public void setComments(int comments) {
-        this.comments = comments + " comments";
+        this.comments = Integer.toString(comments);
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getPostBy() {
+        return postBy;
+    }
+
+    public void setPostBy(int postBy) {
+        this.postBy = postBy;
+    }
+
 
     public Bitmap getProfilePicture() {
         return profilePicture;
@@ -129,6 +144,10 @@ public class Post implements Serializable {
     }
 
     public String getRatingValue() {
+        return ratingValue + " rated";
+    }
+
+    public String getRatingValue_raw() {
         return ratingValue;
     }
 
@@ -137,6 +156,10 @@ public class Post implements Serializable {
     }
 
     public String getComments() {
+        return comments + " comments";
+    }
+
+    public String getComments_raw() {
         return comments;
     }
 

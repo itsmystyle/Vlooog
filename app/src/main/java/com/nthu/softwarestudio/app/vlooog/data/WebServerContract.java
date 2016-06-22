@@ -22,6 +22,4 @@ public class WebServerContract {
 
     public final static String SERVER = "vloooog_server";
 
-    public final static String POST_DETAIL = "post-detail";
-
 }
