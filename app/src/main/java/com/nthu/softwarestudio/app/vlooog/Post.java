@@ -21,8 +21,7 @@ public class Post {
         this.profilePicture = profilePicture;
         this.profileName = profileName;
         this.contentImage = contentImage;
-        if(ratingBar < 0) this.ratingBar = 0;
-        else this.ratingBar = ratingBar;
+        this.ratingBar = ratingBar;
         this.ratingValue = ratingValue;
         this.content = content;
         this.comments = comments;

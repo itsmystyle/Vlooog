@@ -8,10 +8,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
+import com.nthu.softwarestudio.app.vlooog.data.PostContract;
+import com.nthu.softwarestudio.app.vlooog.data.PostHelper;
 
 public class SplashActivity extends AppCompatActivity {
     private final String LOG_TAG = SplashActivity.class.getSimpleName();
     private AccountHelper accountHelper;
+    private PostHelper postHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         accountHelper = new AccountHelper(this);
+        postHelper = new PostHelper(this);
 
         if(accountHelper.isEmpty()){
             //Login

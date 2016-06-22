@@ -18,9 +18,11 @@ public class PostContract {
     public final static String POST_ID = "post-id";
     public final static String POST_USER_ID = "user-id";
 
+    public final static String DATABASE_NAME = "post.db";
+    public final static int DATABASE_VER = 1;
     public final static String TABLE_NAME = "post_table";
     public final static String COL_1_ID = "ID";
-    public final static String COL_2_POSTID = "POST-ID";
+    public final static String COL_2_POSTID = "POST_ID";
     public final static String COL_3_RATE = "RATE";
     public final static String COL_4_RATEVALUE = "RATEVALUE";
     public final static String COL_5_COMMENT = "COMMENT";
@@ -30,7 +32,7 @@ public class PostContract {
             COL_2_POSTID + " INTEGER, " +
             COL_3_RATE + " INTEGER, " +
             COL_4_RATEVALUE + " INTEGER, " +
-            COL_5_COMMENT + "INTEGER)";
+            COL_5_COMMENT + " INTEGER)";
     public final static  String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 }

@@ -217,7 +217,7 @@
 
                                 <Button
                                     android:layout_width="match_parent"
-                                    android:layout_height="20dp"
+                                    android:layout_height="25dp"
                                     android:text="Comment"
                                     android:id="@+id/scrollview_post_comment_button"
                                     android:background="@drawable/rounded_post_dialog_button"

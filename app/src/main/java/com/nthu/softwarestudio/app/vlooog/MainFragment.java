@@ -44,6 +44,7 @@ import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
 import com.nthu.softwarestudio.app.vlooog.data.PostContract;
+import com.nthu.softwarestudio.app.vlooog.data.PostHelper;
 import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
 
 import org.json.JSONArray;
@@ -102,8 +103,21 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        DownloadPost downloadPost = new DownloadPost();
-        downloadPost.execute();
+        //DownloadPost downloadPost = new DownloadPost();
+        //downloadPost.execute();
+        PostHelper postHelper = new PostHelper(getContext());
+        if(postHelper != null && !postHelper.isEmpty()) {
+            //Log.v(TAG_LOG, "update!");
+            //Log.v(TAG_LOG, "position =" + postHelper.getPostId() + " size = " + Data.size());
+            //Log.v(TAG_LOG, String.valueOf(postHelper.getPostId()));
+            if(Data.size() > postHelper.getPostId()){
+                Data.get(postHelper.getPostId()).setRatingBar(postHelper.getRate());
+                Data.get(postHelper.getPostId()).setRatingValue(postHelper.getRateValue());
+                Data.get(postHelper.getPostId()).setComments(postHelper.getComment());
+                Log.v(TAG_LOG, postHelper.getComment());
+            }
+        }
+        recyclerViewPostAdapter.updateData(Data);
     }
 
     @Nullable
@@ -737,6 +751,7 @@ public class MainFragment extends Fragment {
                     intent.putExtra(PostContract.POST_DATE, Data.get(position).getDate());
                     intent.putExtra(PostContract.POST_ID, Data.get(position).getPostId());
                     intent.putExtra(PostContract.POST_USER_ID, Data.get(position).getPostBy());
+                    intent.putExtra("recyclerViewPosition", position);
 
                     ByteArrayOutputStream streamProfilePicture = new ByteArrayOutputStream();
                     Data.get(position).getProfilePicture().compress(Bitmap.CompressFormat.JPEG, 100, streamProfilePicture);

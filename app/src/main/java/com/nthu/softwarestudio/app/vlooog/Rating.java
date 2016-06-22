@@ -4,13 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.nthu.softwarestudio.app.vlooog.data.PostContract;
+import com.nthu.softwarestudio.app.vlooog.data.PostHelper;
 import com.nthu.softwarestudio.app.vlooog.data.WebServerContract;
 
 import org.json.JSONException;
@@ -44,6 +42,7 @@ public class Rating extends AsyncTask<String, Void, String>{
     Post post;
     MainFragment.RecyclerViewPostAdapter.ViewHolder holder;
     View view;
+    int position;
 
     public Rating(Context context, Post post, MainFragment.RecyclerViewPostAdapter.ViewHolder holder){
         this.context = context;
@@ -51,10 +50,11 @@ public class Rating extends AsyncTask<String, Void, String>{
         this.holder = holder;
     }
 
-    public Rating(Context context, Post post, View view){
+    public Rating(Context context, Post post, View view, int position){
         this.context = context;
         this.post = post;
         this.view = view;
+        this.position = position;
     }
 
     @Override
@@ -159,6 +159,10 @@ public class Rating extends AsyncTask<String, Void, String>{
                     rx.setText(post.getRatingValue());
                 }
 
+                //Log.v(LOG_TAG, "Update local database " + position);
+                PostHelper postHelper = new PostHelper(context);
+                postHelper.deleteData();
+                postHelper.insertData(position, post.getRatingBar(), post.getRatingValue_raw(), post.getComments_raw());
 
             }else if(result.equals(FAIL)){
                 Log.v(LOG_TAG, "Fail rating!");
