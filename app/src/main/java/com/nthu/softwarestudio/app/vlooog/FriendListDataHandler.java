@@ -40,6 +40,7 @@ public class FriendListDataHandler {
     public Integer[] mUnreadnum;
     public String[] mNamelist;
     public String[] mPhotoList;
+    public Integer tmpuid;
     public RecyclerView mRecyclerview;
     public FriendlistAdaptor mRecycleAdapter;
     Integer mState;
@@ -92,7 +93,6 @@ public class FriendListDataHandler {
                     mRecycleAdapter.SetStringArrayData(mNamelist, mBitmaps, mLastMsg, mUnreadnum, tmpfrienid.toArray(new Integer[0]));
                     mRecyclerview.setAdapter(mRecycleAdapter);
                     Toast.makeText(mContext,"Complete to update!!!",LENGTH_SHORT).show();
-
                 } catch (JSONException e) {e.printStackTrace();}
             }
         }

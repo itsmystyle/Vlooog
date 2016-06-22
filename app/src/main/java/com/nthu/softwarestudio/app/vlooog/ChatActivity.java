@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
     public String[] ThisTimeLog;
@@ -30,6 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     Integer myid;
     RecyclerView mRecyclerView;
     MsgListAdaptor mAdaptor;
+    LogHelper logdatabase;
 
 
 
@@ -40,6 +42,8 @@ public class ChatActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("");
+        logdatabase = new LogHelper(this);
+
         Intent new_msg=getIntent();
         setTitle(new_msg.getStringExtra("yourFriendName"));
         yourfriendId = new_msg.getIntExtra("yourFriendID",0);
@@ -48,22 +52,18 @@ public class ChatActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         AccountHelper getuid = new AccountHelper(this);
         myid = getuid.getUserId();
-        Integer[] testarray = {3,2,2,3,2,2,3,3,2};
-        String [] testmsglist ={
-                "Hi",
-                "Hello",
-                "wow it's so cool\n\n\n\n\n\n\n\n I can't ",
-                "I can not waitin",
-                "I have to test many thing",
-                "H",
-                "More line!!!!",
-                "Here are you\n\n\n\n\n\n\n\n\n\n\n\n",
-                "Test scroll"
-        };
-        mAdaptor = new MsgListAdaptor(getuid.getUserId());/*
-        mAdaptor.addMsg(JSONObject(Chattmp).getInt("from"),JSONObject(Chattmp).getString("msg"));
+        List<MsgData>tmp=logdatabase.getmsg(myid,yourfriendId);
+        mAdaptor = new MsgListAdaptor(getuid.getUserId());
+        int j=0;
+        for(j=0;j<tmp.size();j++){
+            mAdaptor.addMsg(tmp.get(j).from,tmp.get(j).msg);
+        }
         mRecyclerView.setAdapter(mAdaptor);
-        mRecyclerView.smoothScrollToPosition(mAdaptor.getItemCount());*/
+        if(mAdaptor.getItemCount()>11){
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getParent());
+            linearLayoutManager.setStackFromEnd(true);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
+        }
         connectWebSocket();
     }
 
@@ -87,7 +87,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-                String tmp="{\"action\":\"setname\",\"username\":\""+myid.toString()+"\"}";
+                String tmp="{\"action\":\"setname\",\"username\":\""+myid.toString()+"\",\"friendid\":\""+yourfriendId.toString()+"\"}";
                 mWebSocketClient.send(tmp);
             }
 
@@ -108,6 +108,7 @@ public class ChatActivity extends AppCompatActivity {
                                 linearLayoutManager.setStackFromEnd(true);
                                 mRecyclerView.setLayoutManager(linearLayoutManager);
                             }
+                            logdatabase.insertLog(yourfriendId,myid,jtmp.getString("msg"));
                         }catch(JSONException e){e.printStackTrace();}
                     }
                 });
@@ -130,19 +131,22 @@ public class ChatActivity extends AppCompatActivity {
     public void sendMessage(View view) {
         EditText editText = (EditText)findViewById(R.id.send_msg);
         //mWebSocketClient.send(editText.getText().toString());
-        String tmp="{\"action\":\"message\",\"msg\":\""+editText.getText().toString()+"\",\"username\":\""+myid.toString()+"\",\"to\":\""+yourfriendId.toString()+"\",\"from\":\""+myid.toString()+"\"}";
-        mWebSocketClient.send(tmp);
-        try{
-            JSONObject jtmp = new JSONObject(tmp);
-            mAdaptor.addMsg(jtmp.getInt("from"),jtmp.getString("msg"));
-            mRecyclerView.setAdapter(mAdaptor);
-            if(mAdaptor.getItemCount()>11){
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getParent());
-                linearLayoutManager.setStackFromEnd(true);
-                mRecyclerView.setLayoutManager(linearLayoutManager);
-            }
-        }catch(JSONException e){e.printStackTrace();}
-        editText.setText("");
+        if(!editText.getText().toString().equals("")){
+            String tmp="{\"action\":\"message\",\"msg\":\""+editText.getText().toString()+"\",\"username\":\""+myid.toString()+"\",\"to\":\""+yourfriendId.toString()+"\",\"from\":\""+myid.toString()+"\"}";
+            mWebSocketClient.send(tmp);
+            try{
+                JSONObject jtmp = new JSONObject(tmp);
+                mAdaptor.addMsg(jtmp.getInt("from"),jtmp.getString("msg"));
+                mRecyclerView.setAdapter(mAdaptor);
+                if(mAdaptor.getItemCount()>11){
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getParent());
+                    linearLayoutManager.setStackFromEnd(true);
+                    mRecyclerView.setLayoutManager(linearLayoutManager);
+                }
+                logdatabase.insertLog(myid,yourfriendId,editText.getText().toString());
+            }catch(JSONException e){e.printStackTrace();}
+            editText.setText("");
+        }
     }
 
 
