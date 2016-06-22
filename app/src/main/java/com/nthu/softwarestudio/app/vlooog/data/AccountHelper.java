@@ -91,16 +91,16 @@ public class AccountHelper extends SQLiteOpenHelper{
         }
     }
 
-    public String getUserId(){
+    public int getUserId(){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         String getUserId = "SELECT * FROM " + AccountContract.TABLE_NAME;
         Cursor cursor = sqLiteDatabase.rawQuery(getUserId, null);
 
         try{
-            if(cursor == null) return null;
+            if(cursor == null) return -1;
 
             cursor.moveToNext();
-            return cursor.getString(cursor.getColumnIndex(AccountContract.COL_4_USERID));
+            return cursor.getInt(cursor.getColumnIndex(AccountContract.COL_4_USERID));
         }finally {
             if(sqLiteDatabase != null) sqLiteDatabase.close();
             if(cursor != null) cursor.close();

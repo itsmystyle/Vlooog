@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
+import android.content.Intent;
+import com.nthu.softwarestudio.app.vlooog.data.FriendListActivity;
 
 /**
  * Created by Ywuan on 19/06/2016.
@@ -46,6 +48,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.startAnimation(buttonClick);
+                Intent intent = new Intent(getContext(), FriendListActivity.class);
+                startActivity(intent);
             }
         });
 
