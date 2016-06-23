@@ -40,7 +40,6 @@ import android.widget.Toast;
 
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
-import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.nthu.softwarestudio.app.vlooog.data.AccountHelper;
 import com.nthu.softwarestudio.app.vlooog.data.FriendListActivity;
@@ -62,7 +61,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,6 +155,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.startAnimation(buttonClick);
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                startActivity(intent);
             }
         });
 

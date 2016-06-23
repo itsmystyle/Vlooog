@@ -92,7 +92,7 @@ public class FriendListDataHandler {
 
                     mRecycleAdapter.SetStringArrayData(mNamelist, mBitmaps, mLastMsg, mUnreadnum, tmpfrienid.toArray(new Integer[0]));
                     mRecyclerview.setAdapter(mRecycleAdapter);
-                    Toast.makeText(mContext,"Complete to update!!!",LENGTH_SHORT).show();
+                    //Toast.makeText(mContext,"Complete to update!!!",LENGTH_SHORT).show();
                 } catch (JSONException e) {e.printStackTrace();}
             }
         }

@@ -1,0 +1,111 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.nthu.softwarestudio.app.vlooog.ProfileFragment"
+    android:orientation="vertical"
+    android:background="@color/bone">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="315dp"
+        android:background="@drawable/accb0b31dcfdf0979ddf351afb70b9b562ec5b22">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="6">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/profile_image_imageView"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="15dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="AMANDA"
+                android:id="@+id/profile_nickname_textView"
+                android:layout_gravity="center_horizontal"
+                android:textSize="30sp"
+                android:textColor="@color/snow" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Email: w666666we@gmail.com"
+                android:id="@+id/profile_email_textView"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/pale_silver" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:text="FRIENDS"
+            android:id="@+id/profile_friends_button"
+            android:layout_gravity="bottom|center"
+            android:textColor="@color/white"
+            android:background="@color/pale_silver"
+            android:textSize="20sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:text="Account Setting"
+            android:id="@+id/profile_account_setting_button"
+            android:layout_gravity="bottom|center_horizontal"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:background="@color/pale_silver" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:text="Logout"
+            android:id="@+id/profile_logout_button"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@color/coffee"
+            android:alpha="0.8" />
+    </FrameLayout>
+</LinearLayout>

@@ -192,11 +192,12 @@ public class LoginFragment extends Fragment {
                     int user_id = web_server.getInt(WebServerContract.USER_ID);
                     String nickname = web_server.getString(WebServerContract.NICKNAME);
                     String dataPath = web_server.getString(WebServerContract.USER_DATAPATH);
+                    String email = web_server.getString(WebServerContract.EMAIL);
                     Log.v(LOG_TAG, access_token + " " + Integer.toString(user_id));
 
                     AccountHelper accountHelper = new AccountHelper(getContext());
                     accountHelper.deleteData();
-                    if(accountHelper.insertData(mUsername.getText().toString(), access_token, user_id, nickname, dataPath))
+                    if(accountHelper.insertData(mUsername.getText().toString(), access_token, user_id, nickname, dataPath, email))
                         Log.v(LOG_TAG, "inserted to database");
                     else
                         Log.e(LOG_TAG, "failed to insert to database");

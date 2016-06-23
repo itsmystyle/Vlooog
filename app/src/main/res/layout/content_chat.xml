@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.nthu.softwarestudio.app.vlooog.ChatActivity"
-    tools:showIn="@layout/activity_chat">
+    tools:showIn="@layout/activity_chat"
+    android:background="@color/bone">
 
     <LinearLayout
         android:orientation="vertical"
@@ -50,7 +51,11 @@
                 android:text="Send"
                 android:id="@+id/sendbutton"
                 android:layout_gravity="center_vertical"
-                android:onClick="sendMessage"/>
+                android:onClick="sendMessage"
+                android:background="@drawable/rounded_signin_button"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_margin="5dp" />
         </LinearLayout>
 
 

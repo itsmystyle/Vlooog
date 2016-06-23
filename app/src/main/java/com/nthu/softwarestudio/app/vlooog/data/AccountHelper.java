@@ -30,7 +30,7 @@ public class AccountHelper extends SQLiteOpenHelper{
         Log.v(LOG_TAG, "onUpgrade database");
     }
 
-    public boolean insertData(String user_name, String access_token, int user_id, String nickname, String dataPath){
+    public boolean insertData(String user_name, String access_token, int user_id, String nickname, String dataPath, String email){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(AccountContract.COL_2_USERNAME, user_name);
@@ -38,6 +38,7 @@ public class AccountHelper extends SQLiteOpenHelper{
         contentValues.put(AccountContract.COL_4_USERID, user_id);
         contentValues.put(AccountContract.COL_5_NICKNAME, nickname);
         contentValues.put(AccountContract.COL_6_DATAPATH, dataPath);
+        contentValues.put(AccountContract.COL_7_EMAIL, email);
         try{
             long result = sqLiteDatabase.insert(AccountContract.TABLE_NAME, null, contentValues);
 
@@ -135,6 +136,22 @@ public class AccountHelper extends SQLiteOpenHelper{
 
             cursor.moveToNext();
             return cursor.getInt(cursor.getColumnIndex(AccountContract.COL_4_USERID));
+        }finally {
+            if(sqLiteDatabase != null) sqLiteDatabase.close();
+            if(cursor != null) cursor.close();
+        }
+    }
+
+    public String getEmail(){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        String getAccessToken = "SELECT * FROM " + AccountContract.TABLE_NAME;
+        Cursor cursor = sqLiteDatabase.rawQuery(getAccessToken, null);
+
+        try{
+            if(cursor == null) return null;
+
+            cursor.moveToNext();
+            return cursor.getString(cursor.getColumnIndex(AccountContract.COL_7_EMAIL));
         }finally {
             if(sqLiteDatabase != null) sqLiteDatabase.close();
             if(cursor != null) cursor.close();
