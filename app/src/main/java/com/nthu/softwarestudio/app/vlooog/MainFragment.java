@@ -429,8 +429,10 @@ public class MainFragment extends Fragment {
             accesstoken = accountHelper.getAccessToken();
             try {
                 imageToUpload = ImageLoader.init().from(path).requestSize(512, 512).getBitmap();
+                int nh = (int) ( imageToUpload.getHeight() * (512.0 / imageToUpload.getWidth()) );
+                Bitmap scaled = Bitmap.createScaledBitmap(imageToUpload, 512, nh, true);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                imageToUpload.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                scaled.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
 
             } catch (FileNotFoundException e) {
