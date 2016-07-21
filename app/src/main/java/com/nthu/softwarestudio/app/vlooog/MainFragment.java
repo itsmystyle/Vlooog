@@ -385,6 +385,9 @@ public class MainFragment extends Fragment {
                 cameraPhoto = new CameraPhoto(getActivity().getApplicationContext());
                 galleryPhoto = new GalleryPhoto(getActivity().getApplicationContext());
             }
+        } else {
+            cameraPhoto = new CameraPhoto(getActivity().getApplicationContext());
+            galleryPhoto = new GalleryPhoto(getActivity().getApplicationContext());
         }
     }
 
