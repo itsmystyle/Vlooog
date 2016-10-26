@@ -37,11 +37,11 @@
             android:name=".ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme_Splash_Login" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity" />
         <activity
             android:name=".FriendSearchActivity"
             android:label="@string/title_activity_friend_search"
-            android:theme="@style/AppTheme_Splash_Login"></activity>
+            android:theme="@style/AppTheme_Splash_Login" />
     </application>
 
 </manifest>
